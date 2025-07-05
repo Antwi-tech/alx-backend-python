@@ -37,3 +37,7 @@ def batch_processing(batch_size):
         for user in batch:
             if int(user['age']) > 25:
                 print(user)  # Print user data if age is greater than 25
+
+
+if __name__ == "__main__":
+    batch_processing(20)  # Or any desired batch size
