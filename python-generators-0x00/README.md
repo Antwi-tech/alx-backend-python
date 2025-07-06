@@ -94,3 +94,10 @@ This project is part of the ALX Software Engineering Program. Use as a learning 
 
 ![batch](./images/batch.png)
 
+**lazy paginate**
+
+![lazy](./images/lazy.png)
+
+**avg**
+
+![avg](./images/avg.png)
