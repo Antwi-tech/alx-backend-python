@@ -18,8 +18,7 @@ This project sets up and seeds a MySQL database (`ALX_prodev`) with sample user 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/Antwi-tech/alx-backend-python.git
 ```
 
 ### 2. Install Dependencies
