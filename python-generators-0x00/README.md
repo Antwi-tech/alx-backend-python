@@ -83,3 +83,14 @@ This will:
 
 ## License
 This project is part of the ALX Software Engineering Program. Use as a learning tool.
+
+
+## RESULTS
+**db connection**
+
+![db-connect](./images/0.png)
+
+**batch processing**
+
+![batch](./images/batch.png)
+
