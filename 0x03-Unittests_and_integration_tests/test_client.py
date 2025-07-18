@@ -86,6 +86,25 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             Mock(json=lambda: cls.org_payload),
             Mock(json=lambda: cls.repos_payload)
         ]
+        
+    def test_public_repos(self):
+        """
+        Test that public_repos returns all expected repo names
+        from the fixtures' repos_payload.
+        """
+        client = GithubOrgClient("testorg")
+        result = client.public_repos()
+        self.assertEqual(result, self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """
+        Test that public_repos(license="apache-2.0") correctly
+        filters repositories with 'apache-2.0' license from fixtures.
+        """
+        client = GithubOrgClient("testorg")
+        result = client.public_repos(license="apache-2.0")
+        self.assertEqual(result, self.apache2_repos)
+
 
     @classmethod
     def tearDownClass(cls):
