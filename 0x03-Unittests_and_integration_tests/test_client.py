@@ -73,6 +73,46 @@ class TestGithubOrgClient(unittest.TestCase):
         
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
+@parameterized_class([
+    {
+        'org_payload': TEST_PAYLOAD['org_payload'],
+        'repos_payload': TEST_PAYLOAD['repos_payload'],
+        'expected_repos': TEST_PAYLOAD['expected_repos'],
+        'apache2_repos': TEST_PAYLOAD['apache2_repos'],
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test for GithubOrgClient.public_repos."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Start patcher for requests.get and configure responses."""
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+
+        # Define mock behavior for each URL fetch in sequence
+        cls.mock_get.side_effect = [
+            Mock(json=lambda: cls.org_payload),
+            Mock(json=lambda: cls.repos_payload),
+        ]
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stop requests.get patcher."""
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """Test that public_repos returns expected repo list."""
+        client = GithubOrgClient("test")
+        self.assertEqual(client.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """Test filtering repos by license (apache-2.0)."""
+        client = GithubOrgClient("test")
+        self.assertEqual(
+            client.public_repos(license="apache-2.0"),
+            self.apache2_repos
+        )
 
 @parameterized_class([
     {
