@@ -67,5 +67,19 @@ class TestMemoize(unittest.TestCase):
         self.assertEqual(obj.call_count, 1)  # Ensure it was only called once
 
 
+class TestGetJson(unittest.TestCase):
+    @patch('utils.requests.get')
+    def test_get_json(self, mock_get):
+        url = "http://example.com"
+        expected_payload = {"message": "Hello"}
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = expected_payload
+        mock_get.return_value = mock_response
+
+        self.assertEqual(get_json(url), expected_payload)
+        mock_get.assert_called_once_with(url)
+
+
 if __name__ == '__main__':
     unittest.main()
