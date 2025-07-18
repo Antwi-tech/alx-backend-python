@@ -80,6 +80,27 @@ class TestGetJson(unittest.TestCase):
         self.assertEqual(get_json(url), expected_payload)
         mock_get.assert_called_once_with(url)
 
+class TestGetJson(unittest.TestCase):
+    """Test get_json using mocked requests.get."""
 
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
+    ])
+    @patch("utils.requests.get")
+    def test_get_json(self, test_url, test_payload, mock_get):
+        """Test that get_json returns expected JSON payload from a URL."""
+        # Create a Mock response object with .json() returning test_payload
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        mock_get.return_value = mock_response
+
+        # Call the actual function
+        result = get_json(test_url)
+
+        # Assertions
+        mock_get.assert_called_once_with(test_url)
+        self.assertEqual(result, test_payload)
+        
 if __name__ == '__main__':
     unittest.main()
