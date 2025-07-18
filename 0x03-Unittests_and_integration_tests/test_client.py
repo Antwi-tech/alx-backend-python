@@ -12,6 +12,7 @@ from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 class TestGithubOrgClient(unittest.TestCase):
     """Unit tests for GithubOrgClient class."""
 
+
     @parameterized.expand([
         ("google", {"login": "google"}),
         ("abc", {"login": "abc"})
@@ -28,6 +29,8 @@ class TestGithubOrgClient(unittest.TestCase):
 
     def test_public_repos_url(self):
         """Test _public_repos_url returns expected URL."""
+        
+        
         with patch.object(GithubOrgClient, 'org',
                           new_callable=PropertyMock) as mock_org:
             mock_org.return_value = {"repos_url": "http://repos.com"}
@@ -37,6 +40,8 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json):
         """Test public_repos returns expected repo names."""
+        
+        
         mock_get_json.return_value = [
             {"name": "repo-alpha"},
             {"name": "repo-beta"},
@@ -61,8 +66,11 @@ class TestGithubOrgClient(unittest.TestCase):
         ({}, "my_license", False),
         ({"license": {}}, "my_license", False),
     ])
+    
     def test_has_license(self, repo, license_key, expected):
         """Test that has_license returns correct boolean for license check."""
+        
+        
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
@@ -77,9 +85,12 @@ class TestGithubOrgClient(unittest.TestCase):
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test for GithubOrgClient.public_repos with real payloads."""
 
+
     @classmethod
     def setUpClass(cls):
         """Start patching requests.get and setup mock returns."""
+        
+        
         cls.get_patcher = patch("requests.get")
         cls.mock_get = cls.get_patcher.start()
 
@@ -92,7 +103,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """Stop patching requests.get."""
+        
+        
         cls.get_patcher.stop()
+
 
     def test_public_repos(self):
         """Test that public_repos returns expected list of repo names."""
@@ -101,6 +115,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     def test_public_repos_with_license(self):
         """Test that public_repos returns repos filtered by license='apache-2.0'."""
+        
+        
         client = GithubOrgClient("test")
         self.assertEqual(
             client.public_repos(license="apache-2.0"),
@@ -119,6 +135,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos method."""
 
+
     @classmethod
     def setUpClass(cls):
         """Set up patcher for requests.get using fixtures."""
@@ -134,6 +151,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """Stop patching requests.get."""
+        
+        
         cls.get_patcher.stop()
 
     def test_public_repos(self):
