@@ -9,38 +9,31 @@ from fixtures import TEST_PAYLOAD
 
 
 
+
+
 class TestGithubOrgClient(unittest.TestCase):
-    """Test cases for the GithubOrgClient class."""
+    """Test cases for GithubOrgClient class."""
 
+    @parameterized.expand([
+        ("google", {"login": "google", "id": 1}),
+        ("abc", {"login": "abc", "id": 2}),
+    ])
     @patch("client.get_json")
-    def test_public_repos(self, mock_get_json):
-        """Test that public_repos returns expected repos and uses correct URL."""
+    def test_org(self, org_name, expected_response, mock_get_json):
+        """Test that GithubOrgClient.org returns correct value from get_json."""
 
-        # Mocked payload from get_json
-        mock_payload = [
-            {"name": "repo1"},
-            {"name": "repo2"},
-            {"name": "repo3"},
-        ]
-        mock_get_json.return_value = mock_payload
+        # Arrange
+        mock_get_json.return_value = expected_response
 
-        # Expected result from public_repos
-        expected_repos = ["repo1", "repo2", "repo3"]
+        # Act
+        client = GithubOrgClient(org_name)
+        result = client.org
 
-        # Create instance of client
-        client = GithubOrgClient("test_org")
+        # Assert
+        self.assertEqual(result, expected_response)
+        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
 
-        # Patch _public_repos_url to avoid external calls
-        with patch.object(GithubOrgClient, "_public_repos_url", new_callable=MagicMock) as mock_url:
-            mock_url.return_value = "http://mocked-url.com"
 
-            # Call the method
-            result = client.public_repos()
-
-            # Assertions
-            self.assertEqual(result, expected_repos)
-            mock_get_json.assert_called_once_with("http://mocked-url.com")
-            mock_url.assert_called_once()
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test for GithubOrgClient.public_repos."""
 
