@@ -9,22 +9,19 @@ from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Unit tests for GithubOrgClient methods."""
+    """Test class for GithubOrgClient methods."""
 
     @parameterized.expand([
-        ("google",),
-        ("abc",),
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False),
+        ({}, "my_license", False),  # optional edge case: no license field
     ])
-    @patch("client.get_json")
-    def test_org(self, org_name, mock_get_json):
-        """Test that GithubOrgClient.org returns the correct value."""
-        expected = {"login": org_name}
-        mock_get_json.return_value = expected
+    def test_has_license(self, repo, license_key, expected):
+        """Test that has_license correctly checks the license key."""
+        result = GithubOrgClient.has_license(repo, license_key)
+        self.assertEqual(result, expected)
 
-        client = GithubOrgClient(org_name)
-        self.assertEqual(client.org, expected)
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
-
+       
     @patch("client.GithubOrgClient.org", new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
         """Test the _public_repos_url property."""

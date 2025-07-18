@@ -42,7 +42,7 @@ class GithubOrgClient:
             ]
         return repo_names
 
-    @staticmethod
-    def has_license(repo, license_key):
-        """Check if a repo has the given license."""
-        return repo.get("license", {}).get("key") == license_key
+@staticmethod
+def has_license(repo, license_key):
+    """Check if a repo has the given license."""
+    return repo.get("license", {}).get("key") == license_key
