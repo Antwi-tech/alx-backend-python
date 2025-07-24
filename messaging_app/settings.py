@@ -97,6 +97,10 @@ STATIC_URL = '/static/'
 # DEFAULT PRIMARY KEY FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+'DEFAULT_PERMISSION_CLASSES': (
+    'messaging_app.chats.permissions.IsParticipantOfConversation',
+), # type: ignore
+
 # DRF + JWT Authentication Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -108,8 +112,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 # SimpleJWT Token Lifetime Config
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-}
+},
