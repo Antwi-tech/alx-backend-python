@@ -2,6 +2,7 @@ import sqlite3
 import functools
 from datetime import datetime  # Importing datetime for timestamp logging
 
+
 # Decorator to log SQL queries with timestamps
 def log_queries(func):
     @functools.wraps(func)
@@ -47,3 +48,28 @@ users = fetch_all_users(query="SELECT * FROM users")
 print("Fetched Users:")
 for user in users:
     print(user)
+
+
+
+
+def multiply(func):
+    func()
+    def wrapper():
+        a = 4
+        b = 5
+        z = a * b
+        print(f"Multiplication of {a} and {b} is {z}")
+        
+    return wrapper
+
+
+# Base 
+@multiply
+def addition():
+    a = 4
+    b = 5
+    z = a + 5
+    
+    print(f"Additon of {a} and {b} is {z}")
+    
+addition()    
