@@ -97,7 +97,7 @@ STATIC_URL = '/static/'
 # DEFAULT PRIMARY KEY FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ DRF + JWT Authentication Settings
+# DRF + JWT Authentication Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -108,7 +108,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-# ✅ SimpleJWT Token Lifetime Config
+# SimpleJWT Token Lifetime Config
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
