@@ -9,39 +9,17 @@ class IsOwnerOrParticipant(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        """
+        - GET, POST, PUT, PATCH, DELETE are allowed
+          only if the user is a participant of the conversation.
+        """
         user = request.user
-
-        # For Message objects (assuming 'sender' and 'receiver' fields)
-        if hasattr(obj, 'sender') and hasattr(obj, 'receiver'):
-            return obj.sender == user or obj.receiver == user
-
-        # For Conversation objects (assuming 'participants' is a many-to-many field)
-        if hasattr(obj, 'participants'):
-            return user in obj.participants.all()
-
-        return False
-
-from rest_framework import permissions
-
-class IsOwnerOrParticipant(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj.sender == request.user or obj.receiver == request.user
-
-
-class IsParticipantOfConversation(BasePermission):
-    """
-    Allows access only to authenticated users who are participants
-    in a conversation. Applies to all unsafe methods too.
-    """
-
-    def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated
-
-    def has_object_permission(self, request, view, obj):
         conversation = getattr(obj, 'conversation', None)
 
-        # Read-only and write requests restricted to participants
-        if conversation:
-            return request.user in conversation.participants.all()
+        # Explicit check for unsafe methods
+        if request.method in ["PUT", "PATCH", "DELETE", "POST", "GET"]:
+            if conversation:
+                return user in conversation.participants.all()
 
-        return request.user in obj.participants.all()
+        # Default deny
+        return False
