@@ -1,5 +1,3 @@
-"""_summary_
-    
 INSTALLED_APPS = [
     ...
     'rest_framework',
@@ -75,7 +73,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-    """
 
 # ... other Django settings like DATABASES, TEMPLATES, etc.
 ""
