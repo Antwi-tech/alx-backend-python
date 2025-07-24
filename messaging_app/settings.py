@@ -14,8 +14,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Django REST Framework
     'rest_framework',
+    
+    # JWT Authentication support
     'rest_framework_simplejwt',
+    
+    # Your app
     'messaging_app.chats',
 ]
 
@@ -31,16 +37,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'messaging_app.urls'
 
+# ✅ DRF + JWT Authentication Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT
+        'rest_framework.authentication.SessionAuthentication',        # Optional fallback
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',  # Require auth by default
     ),
 }
 
+# ✅ SimpleJWT Token Lifetime Config
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
