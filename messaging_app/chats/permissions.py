@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -30,21 +30,18 @@ class IsOwnerOrParticipant(permissions.BasePermission):
 
 class IsParticipantOfConversation(BasePermission):
     """
-    Allows access only to authenticated users who are participants of the conversation.
+    Allows access only to authenticated users who are participants
+    in a conversation. Applies to all unsafe methods too.
     """
 
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        """
-        Object-level permission to only allow participants of a conversation
-        to interact with its messages or conversations.
-        """
         conversation = getattr(obj, 'conversation', None)
 
+        # Read-only and write requests restricted to participants
         if conversation:
             return request.user in conversation.participants.all()
 
-        # If we're working directly with a conversation
         return request.user in obj.participants.all()
