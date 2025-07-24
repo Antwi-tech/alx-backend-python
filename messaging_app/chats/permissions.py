@@ -4,9 +4,10 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 
 class IsOwnerOrParticipant(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj.sender == request.user or obj.receiver == request.user
-     
+    def has_permission(self, request, view):
+        # Only allow authenticated users
+        return request.user and request.user.is_authenticated
+    
     def has_object_permission(self, request, view, obj):
         """
         - GET, POST, PUT, PATCH, DELETE are allowed
