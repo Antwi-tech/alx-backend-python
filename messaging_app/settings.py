@@ -108,18 +108,19 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-
-    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination',
-    'PAGE_SIZE': 20,
-
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
-
+    
     'DEFAULT_PERMISSION_CLASSES': (
         'messaging_app.chats.permissions.IsParticipantOfConversation',
     ),
+    
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    
+    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination',
+    'PAGE_SIZE': 20,
 }
+
 
 # SimpleJWT Token Lifetime Config
 SIMPLE_JWT = {
