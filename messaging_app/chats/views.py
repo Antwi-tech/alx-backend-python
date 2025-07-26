@@ -5,6 +5,9 @@ from rest_framework.exceptions import PermissionDenied
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsOwnerOrParticipant, IsParticipantOfConversation
+from .filters import MessageFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from .pagination import MessagePagination
 
 class MessageListCreateView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
@@ -68,3 +71,19 @@ class MessageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Only messages from conversations the user is in
         return Message.objects.filter(conversation__participants=self.request.user)
+
+
+class MessageListView(generics.ListAPIView):
+    serializer_class = MessageSerializer
+    queryset = Message.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MessageFilter
+    pagination_class = MessagePagination
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Message.objects.filter(
+            sender=self.request.user
+        ) | Message.objects.filter(
+            recipient=self.request.user
+        )    
