@@ -8,6 +8,9 @@ from .permissions import IsOwnerOrParticipant, IsParticipantOfConversation
 from .filters import MessageFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .pagination import MessagePagination
+import django_filters
+from django.db.models import Q
+from .models import Message
 
 class MessageListCreateView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
@@ -87,3 +90,25 @@ class MessageListView(generics.ListAPIView):
         ) | Message.objects.filter(
             recipient=self.request.user
         )    
+        
+class MessageFilter(django_filters.FilterSet):
+    sender = django_filters.CharFilter(field_name="sender__username", lookup_expr='iexact')
+    recipient = django_filters.CharFilter(field_name="recipient__username", lookup_expr='iexact')
+    start_date = django_filters.IsoDateTimeFilter(field_name="timestamp", lookup_expr='gte')
+    end_date = django_filters.IsoDateTimeFilter(field_name="timestamp", lookup_expr='lte')
+    user = django_filters.CharFilter(method='filter_user')
+        
+ 
+class MessageListView(generics.ListAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = MessagePagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MessageFilter
+
+    def get_queryset(self):
+        return Message.objects.filter(
+            sender=self.request.user
+        ) | Message.objects.filter(
+            recipient=self.request.user
+        )       

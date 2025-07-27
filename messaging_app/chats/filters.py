@@ -1,6 +1,8 @@
+# chats/filters.py
+
 import django_filters
-from .models import Message
 from django.db.models import Q
+from .models import Message
 
 class MessageFilter(django_filters.FilterSet):
     sender = django_filters.CharFilter(field_name="sender__username", lookup_expr='iexact')
@@ -14,4 +16,6 @@ class MessageFilter(django_filters.FilterSet):
         fields = ['sender', 'recipient', 'start_date', 'end_date', 'user']
 
     def filter_user(self, queryset, name, value):
-        return queryset.filter(Q(sender__username__iexact=value) | Q(recipient__username__iexact=value))
+        return queryset.filter(
+            Q(sender__username__iexact=value) | Q(recipient__username__iexact=value)
+        )
