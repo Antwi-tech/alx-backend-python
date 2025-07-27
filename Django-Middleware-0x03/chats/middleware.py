@@ -7,6 +7,8 @@ from datetime import datetime
 from datetime import datetime, timedelta
 from django.core.cache import cache
 from django.http import HttpResponseForbidden
+from django.contrib.auth.models import AnonymousUser
+
 
 class RestrictAccessByTimeMiddleware:
     def __init__(self, get_response):
@@ -77,17 +79,13 @@ class RolepermissionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Example: Restrict access to certain sensitive paths
-        restricted_paths = ['/chats/delete/', '/chats/manage/']  # Adjust as needed
-        user = request.user
+        restricted_paths = ['/admin-only/', '/moderator/']  # Adjust paths as needed
 
-        if any(path in request.path for path in restricted_paths):
-            if not user.is_authenticated:
-                return HttpResponseForbidden("Access denied: You must be logged in.")
-            
-            user_role = getattr(user, 'role', None)
-            if user_role not in ['admin', 'moderator']:
-                return HttpResponseForbidden("Access denied: Insufficient permissions.")
-
-        return self.get_response(request)    
-    
+        if any(request.path.startswith(path) for path in restricted_paths):
+            user = request.user
+            if isinstance(user, AnonymousUser) or not user.is_authenticated:
+                return HttpResponseForbidden("403 Forbidden: Authentication required.")
+            if not hasattr(user, 'role') or user.role not in ['admin', 'moderator']:
+                return HttpResponseForbidden("403 Forbidden: You do not have the required role.")
+                
+        return self.get_response(request)
