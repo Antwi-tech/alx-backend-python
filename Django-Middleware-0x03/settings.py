@@ -102,6 +102,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
     'messaging_app.chats.permissions.IsParticipantOfConversation',
 ), # type: ignore
 
+MIDDLEWARE = [
+    ...
+    'chats.middleware.RequestLoggingMiddleware'
+]
+
 # DRF + JWT Authentication Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -127,3 +132,4 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
