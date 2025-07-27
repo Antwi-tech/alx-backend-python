@@ -1,0 +1,21 @@
+# chats/filters.py
+
+import django_filters
+from django.db.models import Q
+from .models import Message
+
+class MessageFilter(django_filters.FilterSet):
+    sender = django_filters.CharFilter(field_name="sender__username", lookup_expr='iexact')
+    recipient = django_filters.CharFilter(field_name="recipient__username", lookup_expr='iexact')
+    start_date = django_filters.IsoDateTimeFilter(field_name="timestamp", lookup_expr='gte')
+    end_date = django_filters.IsoDateTimeFilter(field_name="timestamp", lookup_expr='lte')
+    user = django_filters.CharFilter(method='filter_user')
+
+    class Meta:
+        model = Message
+        fields = ['sender', 'recipient', 'start_date', 'end_date', 'user']
+
+    def filter_user(self, queryset, name, value):
+        return queryset.filter(
+            Q(sender__username__iexact=value) | Q(recipient__username__iexact=value)
+        )
