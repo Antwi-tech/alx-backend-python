@@ -4,6 +4,10 @@ from datetime import datetime
 from django.http import HttpResponseForbidden
 import logging
 from datetime import datetime
+from datetime import datetime, timedelta
+from django.core.cache import cache
+from django.http import HttpResponseForbidden
+
 class RestrictAccessByTimeMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -33,3 +37,36 @@ class RequestLoggingMiddleware:
         log_message = f"{datetime.now()} - User: {user} - Path: {request.path}"
         logger.info(log_message)
         return self.get_response(request)
+    
+class OffensiveLanguageMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.time_window = timedelta(minutes=1)
+        self.message_limit = 5
+
+    def __call__(self, request):
+        if request.method == 'POST' and '/messages/' in request.path:
+            ip = self.get_client_ip(request)
+            now = datetime.now()
+
+            message_history = cache.get(ip, [])
+            # Clean up timestamps older than the window
+            message_history = [timestamp for timestamp in message_history if now - timestamp < self.time_window]
+
+            if len(message_history) >= self.message_limit:
+                return HttpResponseForbidden("Rate limit exceeded: Max 5 messages per minute.")
+
+            # Record current message timestamp
+            message_history.append(now)
+            cache.set(ip, message_history, timeout=60)
+
+        return self.get_response(request)
+
+    def get_client_ip(self, request):
+        """Get IP address from headers or fallback to REMOTE_ADDR"""
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip    
