@@ -50,3 +50,5 @@ def threaded_conversations(request):
     return render(request, 'messaging/threaded_conversations.html', {
         'conversations': conversations
     })
+    
+    
