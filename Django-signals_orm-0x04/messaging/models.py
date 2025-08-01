@@ -6,15 +6,19 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)  # New field to track edits
+    edited = models.BooleanField(default=False)  # Tracks if the message was edited
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.receiver}"
+        return f"Message from {self.sender.username} to {self.receiver.username}"
+
 
 class MessageHistory(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
     previous_content = models.TextField()
     edited_at = models.DateTimeField(auto_now_add=True)
+    edited_by = models.ForeignKey(  # ✅ Field to track who made the edit
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='message_edits'
+    )
 
     def __str__(self):
-        return f"Edit history for Message ID {self.message.id} at {self.edited_at}"
+        return f"Edit of Message {self.message.id} by {self.edited_by} at {self.edited_at}"
