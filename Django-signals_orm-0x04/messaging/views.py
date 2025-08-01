@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Message
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.shortcuts import render
+from messaging.models import Message
+
 
 @login_required
 def delete_user(request):
@@ -51,4 +56,9 @@ def threaded_conversations(request):
         'conversations': conversations
     })
     
+    
+@cache_page(60)
+def conversation_messages(request, conversation_id):
+    messages = Message.objects.filter(conversation_id=conversation_id).select_related('sender', 'receiver')
+    return render(request, 'messaging/conversation.html', {'messages': messages})
     
