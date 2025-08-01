@@ -6,10 +6,20 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)  # Tracks if the message was edited
+
+    # Threading support: reply-to a message
+    parent_message = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='replies'
+    )
+
+    edited = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Message from {self.sender.username} to {self.receiver.username}"
+        return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp}"
 
 
 class MessageHistory(models.Model):
