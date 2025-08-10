@@ -11,6 +11,7 @@ WORKDIR /app
 # Install dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y default-mysql-client
 
 # Copy the rest of the app code
 COPY . /app/
