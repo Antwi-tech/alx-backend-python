@@ -7,16 +7,16 @@ set -e
 DEPLOYMENT_NAME="django-messaging-app"   # Change if your deployment has a different name
 NAMESPACE="default"                      # Change if using another namespace
 
-echo "📌 Scaling deployment $DEPLOYMENT_NAME to 3 replicas..."
+echo " Scaling deployment $DEPLOYMENT_NAME to 3 replicas..."
 kubectl scale deployment $DEPLOYMENT_NAME --replicas=3 -n $NAMESPACE
 
-echo "✅ Verifying pods are running..."
+echo "Verifying pods are running..."
 kubectl get pods -n $NAMESPACE
 
-echo "📌 Performing load test on the Django service..."
+echo "Performing load test on the Django service..."
 # Replace service-name and port with your actual service name and port
 SERVICE_IP=$(minikube service $DEPLOYMENT_NAME --url | head -n1)
 wrk -t2 -c10 -d30s "$SERVICE_IP"
 
-echo "📌 Monitoring resource usage..."
+echo "Monitoring resource usage..."
 kubectl top pods -n $NAMESPACE
