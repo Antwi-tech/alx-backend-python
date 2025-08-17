@@ -1,0 +1,43 @@
+#!/bin/bash
+# kurbeScript
+# Script to set up Kubernetes locally using Minikube + kubectl
+
+set -e  # exit on error
+
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+echo ">>> Checking for required tools..."
+
+# Install kubectl if missing
+if ! command_exists kubectl; then
+    echo ">>> kubectl not found. Installing..."
+    curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    sudo mv kubectl /usr/local/bin/
+    echo ">>> kubectl installed successfully."
+else
+    echo ">>> kubectl is already installed."
+fi
+
+# Install minikube if missing
+if ! command_exists minikube; then
+    echo ">>> minikube not found. Installing..."
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
+    echo ">>> minikube installed successfully."
+else
+    echo ">>> minikube is already installed."
+fi
+
+echo ">>> Starting Minikube Kubernetes cluster..."
+minikube start
+
+echo ">>> Verifying cluster is running..."
+kubectl cluster-info
+
+echo ">>> Listing available pods..."
+kubectl get pods --all-namespaces
