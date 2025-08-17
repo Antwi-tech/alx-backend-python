@@ -1,0 +1,31 @@
+#!/bin/bash
+# Rolling Update Script for Django App
+
+DEPLOYMENT="django-app-blue"
+SERVICE="django-service"
+
+echo "Applying rolling update for $DEPLOYMENT..."
+kubectl apply -f messaging_app/blue_deployment.yaml
+
+echo "Monitoring rollout status..."
+kubectl rollout status deployment/$DEPLOYMENT
+
+echo "Testing app availability during rollout..."
+# Run curl requests in the background
+( while true; do
+    curl -s http://$(minikube ip):$(kubectl get svc $SERVICE -o jsonpath='{.spec.ports[0].nodePort}')/ || echo "Request failed"
+    sleep 1
+done ) &
+
+CURL_PID=$!
+
+# Give rollout some time to finish
+kubectl rollout status deployment/$DEPLOYMENT
+
+# Stop curl loop
+kill $CURL_PID
+
+echo "Rolling update complete."
+
+echo "Current Pods:"
+kubectl get pods -l app=django-app,version=blue -o wide
