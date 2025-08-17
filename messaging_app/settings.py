@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # BASE DIRECTORY
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -138,4 +139,18 @@ DATABASES = {
         'HOST': os.environ.get('MYSQL_HOST', 'db'),
         'PORT': os.environ.get('MYSQL_PORT', '3306'),
     }
+}
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "graphene_django",
+    "crm",
+]
+
+GRAPHENE = {
+    "SCHEMA": "alx_backend_graphql_crm.schema.schema"  # path to schema
 }
